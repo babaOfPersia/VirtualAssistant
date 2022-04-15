@@ -2,6 +2,9 @@
 # virtualAssistant.py - virtual assistant
 
 from os import system, times
+import sys
+from tkinter import E
+from urllib import response
 from pyttsx3 import engine
 import speech_recognition as sr
 import pyttsx3
@@ -9,11 +12,13 @@ import pywhatkit
 import datetime
 import pyjokes
 import wikipedia
+import Engine
 
 vReciever = sr.Recognizer()
 vEngine = pyttsx3.init()
 voices = vEngine.getProperty('voices')
 vEngine.setProperty('voice', voices[1].id)
+Engine.Engine.scriptLoader(Engine.Engine,"Eliza-script.txt")
 
 def communicate(text):
     print(text)
@@ -22,22 +27,23 @@ def communicate(text):
 
 
 def take_command():
+    command = ""
     try:
         with sr.Microphone() as source:
             print('Listening...')
             voice = vReciever.listen(source)
             command = vReciever.recognize_google(voice)
             command = command.lower()
-            if 'baba' in command:
-                command.replace('baba', '')
+            if 'eliza' in command:
+                command.replace('eliza', '')
                 print(command)
-    except:
+    except Exception as e:
         pass
     return command
 
 def runBaba():
     command = take_command()
-    print(command)
+    print("Your input: "+command)
     if 'play' in command:
         song = command.replace('play', '')
         communicate('playing'+song)
@@ -48,13 +54,15 @@ def runBaba():
     elif 'joke' in command:
         communicate(pyjokes.get_joke())
     elif 'quit' in command:
-        print('do you want to quit? ')
+        communicate(Engine.Engine.finalMessage(Engine.Engine))
+        sys.exit("Exited")  
     else:
-        communicate('Please repeat your query again')
+        response = Engine.Engine.run(Engine.Engine,command)
+        communicate(response)
 
+def startAss():
+    communicate(Engine.Engine.initialMessage(Engine.Engine))
+    while True:
+        runBaba()
 
-while True:
-    runBaba()
-    print('finished iteration')
-print('Exiting')
-communicate('Exiting')
+startAss()
